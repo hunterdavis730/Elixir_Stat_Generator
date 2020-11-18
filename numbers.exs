@@ -18,9 +18,17 @@ defmodule Numbers do
         end
     end
 
-    defp getStringStats(string), do: [{:value, string}, {:isPalindrome, isPalindrome(string)}, {:isNumber, false}]
+    defp getStringStats(string), do: [{:value, string}, {:is_palindrome, isPalindrome(string)}, {:string_length, String.length(string)}, {:isNumber, false}]
 
-    defp getNumberStats(number), do: [{:value, number}, {:isPalindrome, isPalindrome(number)}, {:isNumber, true}, {:fibonacci_value, fibonacci(number)}, {:factorial, factorial(number)}]
+    defp getStringStats(string, :from_list) do
+        [{:value, string}, {:is_palindrome, isPalindrome(string)}, {:string_length, String.length(string)}]
+    end
+
+    defp getNumberStats(number), do: [{:value, number}, {:is_palindrome, isPalindrome(number)}, {:isNumber, true}, {:fibonacci_value, fibonacci(number)}, {:factorial, factorial(number)}]
+
+    defp getNumberStats(number, :from_list) do 
+        [{:value, number}, {:is_palindrome, isPalindrome(number)}, {:fibonacci_value, fibonacci(number)}, {:factorial, factorial(number)}]
+    end
 
     defp getListStats(input) do 
         numbers = Enum.filter(input, &(is_number(&1)))
@@ -37,7 +45,7 @@ defmodule Numbers do
 
     defp listNumberStats(numbers) do 
         getListNumberStats = getListNumberStats(numbers)
-        numberStats = Enum.map(numbers, &(getNumberStats(&1)))
+        numberStats = Enum.map(numbers, &(getNumberStats(&1, :from_list)))
 
         [getListNumberStats, {:individual_number_stats, numberStats}]
     end
@@ -46,17 +54,9 @@ defmodule Numbers do
         [{:max, findMax(numbers)}, {:min, findMin(numbers)}, {:mean, mean(numbers)}, {:median, median(numbers)}, {:sum, sum(numbers)}, {:standard_deviation, standardDeviation(numbers)}]
     end 
 
-    defp getNumberStats(number) do 
-        [{:value, number}, {:isPalindrome, isPalindrome(number)}, {:isNumber, true}]
-    end
-
     defp listStringStats(strings) do
-        stringStats = Enum.map(strings, &(getStringStats(&1)))
+        stringStats = Enum.map(strings, &(getStringStats(&1, :from_list)))
         {:string_stats, stringStats}
-    end
-
-    defp getStringStats(string) do
-        [{:value, string}, {:isPalindrome, isPalindrome(string)}, {:isNumber, is_number(string)}]
     end
 
     def findMax([head | tail]) do 
@@ -228,7 +228,7 @@ defmodule Numbers do
 
     def isPalindrome(p) do 
         if String.valid?(p) do
-            String.split(p, " ") == Enum.reverse(String.split(p, " "))
+            String.split(p, "") == Enum.reverse(String.split(p, ""))
         else
             false
         end
@@ -236,5 +236,5 @@ defmodule Numbers do
 
 end
 
-Numbers.stats([1, 2, 15, 23, 12, 14, 7, 10, "yooy"]) |>
+Numbers.stats([1, 2, 15, 23, 12, 14, 7, 10, "jason", "karen", "hannah", "racecar", 20, 13, 17]) |>
 IO.inspect
